@@ -1,0 +1,42 @@
+/*Write a query to fetch Employee name whose grade greater than 200.*/
+
+SELECT E.Name
+FROM Employee E
+WHERE E.Grade > 200 
+
+
+/*Write a query to fetch the department name where only male staff available.*/
+
+SELECT E.department
+FROM Employee E
+GROUP BY E.Department
+HAVING COUNT(CASE WHEN E.Gender = 'M' THEN 1 END) = 0;
+
+/*Write a query to fetch the second highest salaried employer.*/
+
+select *from Employee 
+group by Salary 
+order by  Salary desc limit 1,1;
+
+/*Write a query to fetch the employ details who did not assigned with any students.*/
+
+SELECT * FROM Employee E
+WHERE
+ NOT EXISTS (SELECT * FROM Student S WHERE S.Class_Teacher_Employee_Id = E.Emp_Id)
+
+/*Write a query to fetch the student who passed in all three subjects.*/
+
+SELECT S.Student_Id FROM Student S
+WHERE (S.Subject1 = 'P' AND S.Subject2 = 'P' AND S.Subject3 = 'P'
+)
+
+/*Write a query to fetch the top employee details where all of his students passed in the subjects.*/
+
+SELECT E.Emp_Id,E.Name,E.Department, E.Grade,E.Salary,E.Gender FROM(
+  SELECT Class_Teacher_Employee_Id,COunt(*) AS Freq FROM (
+    	SELECT S.Class_Teacher_Employee_Id FROM Student S
+			WHERE (S.Subject1 = 'P' AND S.Subject2 = 'P' AND S.Subject3 = 'P') 
+  		) 
+  	GROUP BY Class_Teacher_Employee_Id ORDER BY COUNT(*) DESC LIMIT 1
+	) N, Employee E
+    WHERE N.Class_Teacher_Employee_Id = E.emp_id
